@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Advertencia } from './components/Advertencia';
 import { Formulario } from './components/Formulario';
 import { ListadoImagenes } from './components/ListadoImagenes';
 
@@ -7,6 +8,8 @@ const App = () => {
 
     const [ busqueda, setBusqueda ] = useState('');
     const [ imagenes, setImagenes ] = useState([]);
+
+    const [ noImagenes, setNoImagenes ] = useState( false );
 
     // estados para la paginación
     const [ paginaActual, setPaginaActual ] = useState(1);
@@ -26,6 +29,13 @@ const App = () => {
             const imagenes = await respuesta.json();
 
             setImagenes( imagenes.hits );
+
+            // verifico si la busqueda no dio resultados
+            if ( imagenes.hits.length === 0 ) {
+                setNoImagenes( true );
+                return;
+            }
+            setNoImagenes( false );
 
             // calcular el total de páginas
             const calcularTotalPaginas = Math.ceil( imagenes.totalHits / imagenesPorPagina );
@@ -68,33 +78,46 @@ const App = () => {
             </div>
 
             <div className="row justify-content-center">
-                <ListadoImagenes imagenes={ imagenes } />
 
-                {(paginaActual === 1)
-                    ? null
+                {(noImagenes)
+                    ? (
+                        <div className="form-group col-md-12">
+                            <Advertencia mensaje="No se encontraron resultados" />
+                        </div>
+                    )
                     : (
-                        <button
-                            type="button"
-                            className="btn btn-primary mr-1"
-                            onClick={ paginaAnterior }
-                        >
-                            &laquo; Anterior
-                        </button>
+                        <>
+                            <ListadoImagenes imagenes={ imagenes } />
+
+                            {(paginaActual === 1)
+                                ? null
+                                : (
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary mr-1"
+                                        onClick={ paginaAnterior }
+                                    >
+                                        &laquo; Anterior
+                                    </button>
+                                )
+                            }
+
+                            {(paginaActual === totalPaginas)
+                                ? null
+                                : (
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={ paginaSiguiente }
+                                    >
+                                        Siguiente &raquo;
+                                    </button>
+                                )
+                            }
+                        </>
                     )
                 }
 
-                {(paginaActual === totalPaginas)
-                    ? null
-                    : (
-                        <button
-                            type="button"
-                            className="btn btn-primary"
-                            onClick={ paginaSiguiente }
-                        >
-                            Siguiente &raquo;
-                        </button>
-                    )
-                }
             </div>
         </div>
     )

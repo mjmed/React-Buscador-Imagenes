@@ -13,7 +13,7 @@ Aplicación que permite buscar imágenes consumiendo la API de Pixabay.
 ### APIs utilizadas:
 - [**Pixabay**](https://pixabay.com/): API de imágenes.
 
-### Versión: 1.0.0
+### Versión: 2.0.0
 
 ### Notas:
 Comando para ejecutar la aplicación:
